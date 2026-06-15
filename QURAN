@@ -1,1 +1,362 @@
-# quran-hinglish-app
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Quran Al-Kareem - Hinglish & Arabic</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+        /* Global Styles */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #fdfbf7;
+            color: #333;
+        }
+
+        /* Screen Containers */
+        .screen {
+            display: none;
+            min-height: 100vh;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .active {
+            display: flex;
+        }
+
+        /* Cover Page */
+        #cover-page {
+            background-color: #0b3d2e;
+            color: #c5a059;
+            text-align: center;
+        }
+        .border-box {
+            border: 4px solid #c5a059;
+            padding: 40px 20px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 100%;
+            background-color: rgba(11, 61, 46, 0.9);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-family: 'Times New Roman', serif;
+        }
+        p.subtitle {
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+            color: #fdfbf7;
+            margin-bottom: 30px;
+        }
+        button {
+            background-color: #c5a059;
+            color: #0b3d2e;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #e0bc75;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Bismillah Page */
+        .bismillah-text {
+            font-family: 'Amiri', serif;
+            font-size: 3.5rem;
+            color: #0b3d2e;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Reader Page */
+        #reader-page {
+            justify-content: flex-start;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .top-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #c5a059;
+            margin-bottom: 20px;
+            margin-top: 20px;
+        }
+        #surah-title {
+            font-size: 1.8rem;
+            color: #0b3d2e;
+            font-weight: 600;
+        }
+        
+        .surah-selector {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 1rem;
+            border: 2px solid #c5a059;
+            border-radius: 5px;
+            background-color: #fdfbf7;
+            color: #0b3d2e;
+            cursor: pointer;
+        }
+
+        /* Table Layout for Ayats */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #0b3d2e;
+            color: #c5a059;
+            padding: 15px;
+            font-size: 1.1rem;
+        }
+        th.left { text-align: left; }
+        th.right { text-align: right; font-family: 'Amiri', serif;}
+        
+        td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #e0dcd3;
+            vertical-align: top;
+        }
+        .hinglish-col {
+            width: 50%;
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #4a4a4a;
+        }
+        .arabic-col {
+            width: 50%;
+            text-align: right;
+            font-size: 1.8rem;
+            font-family: 'Amiri', serif;
+            direction: rtl;
+            line-height: 2;
+            color: #0b3d2e;
+        }
+        .ayat-num {
+            font-weight: bold;
+            color: #0b3d2e;
+            margin-right: 5px;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 30px;
+            padding-bottom: 50px;
+        }
+        
+        .loading {
+            font-size: 1.2rem;
+            color: #0b3d2e;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hinglish-col, .arabic-col { width: 100%; display: block; text-align: center; }
+            .arabic-col { margin-bottom: 15px; font-size: 2rem; }
+            .hinglish-col { font-size: 1.1rem; border-bottom: 1px dashed #ccc; padding-bottom: 20px; }
+            th { display: none; }
+            .surah-selector { flex-direction: column; }
+            select { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. Cover Page -->
+    <div id="cover-page" class="screen active">
+        <div class="border-box">
+            <h1>Al-Quran Al-Kareem</h1>
+            <p class="subtitle">HINGLISH & ARABIC EDITION</p>
+            <button onclick="showScreen('bismillah-page')">Bismillah</button>
+        </div>
+    </div>
+
+    <!-- 2. Bismillah Blank Page -->
+    <div id="bismillah-page" class="screen">
+        <div class="bismillah-text">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+        <p style="color: #c5a059; font-style: italic; margin-bottom: 40px;">In the name of Allah, the Most Gracious, the Most Merciful</p>
+        <button onclick="startReading()">Start Reading</button>
+    </div>
+
+    <!-- 3. Main Reader Page -->
+    <div id="reader-page" class="screen">
+        <div class="top-bar">
+            <button onclick="showScreen('cover-page')" style="padding: 10px 15px; font-size: 1rem;">Home</button>
+            <div id="surah-title">Loading...</div>
+            <div></div>
+        </div>
+
+        <div class="surah-selector">
+            <label for="surah-dropdown" style="font-weight: 600;">Select Surah:</label>
+            <select id="surah-dropdown" onchange="changeSurah()">
+                <option>Loading Surahs...</option>
+            </select>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th class="left">Hinglish Tarjuma</th>
+                    <th class="right">Original Arabic</th>
+                </tr>
+            </thead>
+            <tbody id="quran-content">
+                <tr>
+                    <td colspan="2" class="loading">Loading Quranic data...</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="nav-buttons">
+            <button id="prev-btn" onclick="prevSurah()">Previous Surah</button>
+            <button id="next-btn" onclick="nextSurah()">Next Surah</button>
+        </div>
+    </div>
+
+    <!-- JavaScript Data and Logic -->
+    <script>
+        let quranData = [];
+        let currentSurahIndex = 0;
+
+        // Load Quran Data from JSON
+        async function loadQuranData() {
+            try {
+                const response = await fetch('quran_data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                quranData = await response.json();
+                console.log(`✅ Loaded ${quranData.length} Surahs`);
+                populateSurahDropdown();
+            } catch (error) {
+                console.error('Error loading Quran data:', error);
+                // Fallback to sample data
+                loadSampleData();
+            }
+        }
+
+        // Sample data as fallback
+        function loadSampleData() {
+            quranData = [
+                {
+                    surahName: "Surah Al-Fatihah",
+                    surahNumber: 1,
+                    ayats: [
+                        { id: 1, h: "Allah ke naam se shuru jo bada meherbaan, nihayat reham wala hai.", a: "بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ" },
+                        { id: 2, h: "Sab tareefein Allah ke liye hain, jo tamaam jahano ka Rab hai.", a: "الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ" },
+                        { id: 3, h: "Jo bada meherbaan, nihayat reham wala hai.", a: "الرَّحْمَنِ الرَّحِيمِ" },
+                        { id: 4, h: "Insaaf (Qayamat) ke din ka maalik hai.", a: "مَالِكِ يَوْمِ الدِّينِ" },
+                        { id: 5, h: "Hum teri hi ibadat karte hain, aur sirf tujhi se madad maangte hain.", a: "إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ" },
+                        { id: 6, h: "Hamein seedhe raaste par chala.", a: "اهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ" },
+                        { id: 7, h: "Un logon ke raaste par jin par tune inaam farmaya. Na ki unke raaste par jin par tera ghazab nazil hua, aur na hi bhatke hue logon ke.", a: "صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ الْمَغْضُوبِ عَلَيْهِمْ وَلَا الضَّالِّينَ" }
+                    ]
+                }
+            ];
+            console.log("⚠️ Using sample data. Please ensure quran_data.json is available.");
+            populateSurahDropdown();
+        }
+
+        // Populate Surah Dropdown
+        function populateSurahDropdown() {
+            const dropdown = document.getElementById('surah-dropdown');
+            dropdown.innerHTML = '';
+            quranData.forEach((surah, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                option.textContent = `${surah.surahNumber}. ${surah.surahName}`;
+                dropdown.appendChild(option);
+            });
+        }
+
+        // Screen Navigation
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function startReading() {
+            showScreen('reader-page');
+            renderSurah(currentSurahIndex);
+        }
+
+        // Render Quran Content
+        function renderSurah(index) {
+            if (index < 0 || index >= quranData.length) return;
+            
+            currentSurahIndex = index;
+            const surah = quranData[index];
+            
+            document.getElementById('surah-title').innerText = `${surah.surahNumber}. ${surah.surahName}`;
+            document.getElementById('surah-dropdown').value = index;
+            
+            const tbody = document.getElementById('quran-content');
+            tbody.innerHTML = '';
+
+            surah.ayats.forEach(ayat => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="hinglish-col"><span class="ayat-num">${ayat.id}.</span> ${ayat.h}</td>
+                    <td class="arabic-col">${ayat.a}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Update Buttons
+            document.getElementById('prev-btn').disabled = (index === 0);
+            document.getElementById('next-btn').disabled = (index === quranData.length - 1);
+        }
+
+        function nextSurah() {
+            if (currentSurahIndex < quranData.length - 1) {
+                renderSurah(currentSurahIndex + 1);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function prevSurah() {
+            if (currentSurahIndex > 0) {
+                renderSurah(currentSurahIndex - 1);
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function changeSurah() {
+            const dropdown = document.getElementById('surah-dropdown');
+            renderSurah(parseInt(dropdown.value));
+        }
+
+        // Initialize on page load
+        window.addEventListener('DOMContentLoaded', loadQuranData);
+    </script>
+</body>
+</html>
