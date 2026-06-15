@@ -1,1 +1,0 @@
-# quran-hinglish-app
